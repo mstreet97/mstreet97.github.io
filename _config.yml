@@ -32,12 +32,12 @@
 # in the templates via {{ site.myvariable }}.
 title: |
         Street #CySec 
-subtitle: Your awesome subtitle
+subtitle: Tales of a journey in cybersecurity
 description: >- # this means to ignore newlines until "baseurl:"
   A collection of my adventures in the infosec world!
 author: mstreet
-#email: your-email@example.com
-avatar: assets/images/logo_streetcysec.png
+email: matteo.strada@alumni.unitn.it
+avatar: assets/images/avatar.jpg
 
 # You'll want to customize url and baseurl for your own site:
 baseurl: "/" # the subpath of your site, e.g. /blog
