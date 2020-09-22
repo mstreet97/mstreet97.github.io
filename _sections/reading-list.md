@@ -3,7 +3,7 @@ title: Reading List
 subtitle: my go to infosec books!
 layout: "page"
 icon: fa-book
-order: 3
+order: 2
 ---
 
 I started out from scratch and since then I kept a list of my favorite hacking and pentesting books:
