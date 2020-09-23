@@ -5,7 +5,7 @@ layout: post
 ---
 # Introduction
 After months of self study, reading books, watching videos and experimenting with HackTheBox and TryHackMe I decided to adopt a more rigorous approach and try a structured learning experience. While searching around the interwebs I stumbled upon eLearnSecurity. 
-<img aling="right" src="/assets/images/ejpt_logo.png">
+<img align="right" src="/assets/images/ejpt_logo.png">
 I didn't know them before, so I started doing my researches and from what I've read while lesser known that other like OffSec or EC-Council, they were highly touted for the quality of their courseware, furthermore they feature a unique exam: 3 days fully practical exam, and not the usual memorize-and-answer multiple choice question. The PTS, penetration testing student, along with its exam, eJPT, is the first of their Network Security and Web Security training paths, posing as a foundation to gain all preliminary skills needed in this field. Seeing the cost wasn't prohibitive, 500$ for the Elite version, I decided to give it a go, so here is my experience! (NOTE: they frequently have discounts running, so be sure to check their social accounts).
 # Course Content
 You can find the course syllabus in detail on eLearnSecurity's website, but they organized the work into three macro sections:
