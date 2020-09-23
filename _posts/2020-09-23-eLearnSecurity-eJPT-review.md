@@ -5,7 +5,7 @@ layout: post
 ---
 # Introduction
 After months of self study, reading books, watching videos and experimenting with HackTheBox and TryHackMe I decided to adopt a more rigorous approach and try a structured learning experience. While searching around the interwebs I stumbled upon eLearnSecurity. 
-![eJPT logo](/assets/images/ejpt_logo.png){:class="img-responsive"}
+<img aling="right" src="/assets/images/ejpt_logo.png">
 I didn't know them before, so I started doing my researches and from what I've read while lesser known that other like OffSec or EC-Council, they were highly touted for the quality of their courseware, furthermore they feature a unique exam: 3 days fully practical exam, and not the usual memorize-and-answer multiple choice question. The PTS, penetration testing student, along with its exam, eJPT, is the first of their Network Security and Web Security training paths, posing as a foundation to gain all preliminary skills needed in this field. Seeing the cost wasn't prohibitive, 500$ for the Elite version, I decided to give it a go, so here is my experience! (NOTE: they frequently have discounts running, so be sure to check their social accounts).
 # Course Content
 You can find the course syllabus in detail on eLearnSecurity's website, but they organized the work into three macro sections:
@@ -27,5 +27,7 @@ Some tips I can give without breaking the NDA are:
 - If you are still stuck review the training material, 95% of the exam has been explained and if you still don't know what to do, well, usually google has an answer
 - Take breaks and for whatever reason DON'T get angry, if something is not working it is either not the way to go or you're doing it wrong
 - Finally, enjoy, really, have fun, and try to learn. Remember that if you fail you have at least one other attempt depending on your course plan, so really, enjoy!  
+
 # Final thoughts
 Overall, I thoroughly enjoyed this course. It is the most gentle introduction to penetration testing while still teaching well. For me most of the material wasn't new, having done a lot of self study in the previous months. Nevertheless I learnt some new tricks and most of all had fun, which to me is the most important part. The certification you get is shareable on linkedin and makes a nice impression on your CV and this is due to the all practical exam. So, finally, is this certification for you? Well, fortunately, in the infosec field you can learn almost everything for free by leveraging the high amount of online resources, but if you prefer a structured learning approach, then you should really consider eJPT. The price is fair (and with the frequent coupons can be lowered even more) and it will be a real benchmark to also understand if penetration testing is what you really want to do.
+That said, here is the course [link](https://www.elearnsecurity.com/course/penetration_testing_student/), be sure to check it out!
