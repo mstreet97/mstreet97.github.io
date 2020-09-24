@@ -46,7 +46,7 @@ Let's get the first flag then!
 
 Time to move on. We still need some way to get a shell into the machine. Checking the webpage source, we see something at line 15.
 
-<img align="center" src="/assets/images/thm_mr_robot/js.png">
+<img align="center" src="/assets/images/thm_mr_robot/js.png" style="height:80%;">
 
 It seems that there is a webpage available (index.html) accessible by a specific IP. Let's run a gobuster then.
 We find different folders and also files related to wordpress. 
@@ -62,7 +62,7 @@ Using wp-scan, with the commands: "--url http://IP --usernames 'Elliot' --passwo
 
 Aaand we're in!
 
-<img align="center" src="/assets/images/thm_mr_robot/wp-in.png">
+<img align="center" src="/assets/images/thm_mr_robot/wp-in.png" style="height:80%;">
 
 Since we have an admin account, we can exploit the wp admin dashboard by inserting in a php theme a reverse shell, which gets executed when the webpage associated to it gets loaded.
 We copy one of the various php-reverse-shells (I used /usr/share/webshells/php/php-reverse-shell.php) and modify its content setting our own ip and port.
@@ -79,7 +79,7 @@ Unfortunately, to see the second flag we need to crack the md5 hash first.
 
 There are various techniques to crack the hash, hashcat and john will do, but I went for crackstation instead, and we find robot's password! 
 
-<img align="center" src="/assets/images/thm_mr_robot/crackstation.png">
+<img align="center" src="/assets/images/thm_mr_robot/crackstation.png" style="height:80%;">
 
 Now we just need to switch user to get the second flag.
 
