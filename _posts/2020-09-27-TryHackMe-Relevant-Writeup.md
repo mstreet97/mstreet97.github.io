@@ -69,7 +69,7 @@ Anyway, looking around better I stumbled upon this [article](https://itm4n.githu
 Following the article, we compile the source code of PrintSpoofer and upload it to the victim machine by setting up a python webserver on our machine and using certutil.exe to download it.  
 <img align="center" src="/assets/images/thm_relevant/webserver.png" style="width:80%;">  
 
-<img align="center" src="/assets/images/thm_relevant/ps-downlaod.png" style="width:80%;">  
+<img align="center" src="/assets/images/thm_relevant/ps-download.png" style="width:80%;">  
 
 After uploading we just need to run PrintSpoofer.exe -i -c powershell to get our powershell ad NT AUTHORITY\SYSTEM.  
 <img align="center" src="/assets/images/thm_relevant/privesc.png" style="width:80%;">
