@@ -40,62 +40,51 @@ Really awesome content if you are a fan of the show, but unfortunately there doe
 The robots.txt had two entries:
 - fsocity.dic which is a word dictionary (and a big hint on what to do next)
 - key-1-of-3.txt, which is out first flag  
-Let's get the first flag then!
 
+Let's get the first flag then!  
 <img align="center" src="/assets/images/thm_mr_robot/key1.png">
 
-Time to move on. We still need some way to get a shell into the machine. Checking the webpage source, we see something at line 15.
-
+Time to move on. We still need some way to get a shell into the machine. Checking the webpage source, we see something at line 15.  
 <img align="center" src="/assets/images/thm_mr_robot/js.png" style="width:80%;">
 
 It seems that there is a webpage available (index.html) accessible by a specific IP. Let's run a gobuster then.
-We find different folders and also files related to wordpress. 
-
+We find different folders and also files related to wordpress.  
 <img align="center" src="/assets/images/thm_mr_robot/gobuster.png">
 
 # Exploitation
 
 Browsing to IP/wp-login gets us the access page. Now, we can try to bruteforce the login with the wordlist we found before. Knowing that in the show MrRobot is Elliot Alderson, it makes sense to try some common usernames. Let's go with 'Elliot'.
-Using wp-scan, with the commands: "--url http://IP --usernames 'Elliot' --passwords fsociety.dic", we are able to bruteforce Elliot's credentials.
-
+Using wp-scan, with the commands: "--url http://IP --usernames 'Elliot' --passwords fsociety.dic", we are able to bruteforce Elliot's credentials.  
 <img align="center" src="/assets/images/thm_mr_robot/wp_creds.png">
 
-Aaand we're in!
-
+Aaand we're in!  
 <img align="center" src="/assets/images/thm_mr_robot/wp-in.png" style="width:80%;">
 
 Since we have an admin account, we can exploit the wp admin dashboard by inserting in a php theme a reverse shell, which gets executed when the webpage associated to it gets loaded.
 We copy one of the various php-reverse-shells (I used /usr/share/webshells/php/php-reverse-shell.php) and modify its content setting our own ip and port.
-Next we copy the php reverse shell into a page, for instange 404.php set up a listener, load the page and we get the shell!
-
+Next we copy the php reverse shell into a page, for instange 404.php set up a listener, load the page and we get the shell!  
 <img align="center" src="/assets/images/thm_mr_robot/revs_arrived.png">
 
 # Privilege escalation
 
 We are finally in as user daemon. After searching around we get into robot's home dir in which we find the second flag and a md5 of robot's password.
-Unfortunately, to see the second flag we need to crack the md5 hash first.
-
+Unfortunately, to see the second flag we need to crack the md5 hash first.  
 <img align="center" src="/assets/images/thm_mr_robot/robots-home.png">
 
 There are various techniques to crack the hash, hashcat and john will do, but I went for crackstation instead, and we find robot's password! 
+<img align="center" src="/assets/images/thm_mr_robot/crackstation.png" style="width:80%;">  
 
-<img align="center" src="/assets/images/thm_mr_robot/crackstation.png" style="width:80%;">
-
-Now we just need to switch user to get the second flag.
-
+Now we just need to switch user to get the second flag.  
 <img align="center" src="/assets/images/thm_mr_robot/key2.png">
 
 Now, the third flag is probably located in root's home directory. As such we need to escalate our privileges. Giving a sudo -l we se that we cannot run any command as root, we need to look another way.
-Looking for suid binaries, we see nmap.
-
+Looking for suid binaries, we see nmap.  
 <img align="center" src="/assets/images/thm_mr_robot/suid.png">
 
-Nmap's interactive mode is perfect for privilege escalation.
-
+Nmap's interactive mode is perfect for privilege escalation.  
 <img align="center" src="/assets/images/thm_mr_robot/nmap_privesc.png">
 
-Finally, since we are root we can get the third flag!
-
+Finally, since we are root we can get the third flag!  
 <img align="center" src="/assets/images/thm_mr_robot/key-3.png">
 
 # Conclusion
