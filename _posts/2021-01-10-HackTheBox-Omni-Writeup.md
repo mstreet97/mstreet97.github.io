@@ -33,7 +33,7 @@ Port 135 has rpc but when trying to connect to it, it times out.
 Port 5958 results as unassigned and as such nmap is not able to identify it. 
 Finally, port 8080 shows a webserver running.
 
-Browsing to the webserver, we are greeted with a basic http authentication for which we don't have credentials. Seems like a dead end... Looking closer at the auth form of the webserver though we see "Windows Device Portal". A quick google search tells us that the "The windows device portal lets you configure and manage you device remotely over a network. It also provides advanced diagnostic tool to help you troubleshoot and view the real-time performance of you Windows device".
+Browsing the webserver, we are greeted with a basic http authentication for which we don't have credentials. Seems like a dead end... Looking closer at the auth form of the webserver though we see "Windows Device Portal". A quick google search tells us that the "The windows device portal lets you configure and manage you device remotely over a network. It also provides advanced diagnostic tool to help you troubleshoot and view the real-time performance of you Windows device".
 
 <img align="center" src="/assets/images/htb_omni/omni_basic_auth.png" style="width:80%;">
 
@@ -67,11 +67,11 @@ We can try to get the user.txt by navigating to C:\Data\Users\App
 
 <img align="center" src="/assets/images/htb_omni/user.png" style="width:80%;">
 
-Unfortunately, when trying to get the user.txt, we get returned an xml document containing the flag under the tag SS. 
+Unfortunately, when trying to get the user.txt, we get back an xml document containing the flag under the tag SS. 
 
 <img align="center" src="/assets/images/htb_omni/secure_string.png" style="width:80%;">
 
-Googling a bit around, we find a powershell method that is called ConvertFrom-SecureString, and ConvertTo-SecureString. In particular we would need to import the correct credentials with $creds = Import-CliXml -path C:\\Users\\app\\user.txt. The current credential of our shell don't work as we are in as the user omni. We so need to find a way to get a shell back as the users needed who anctually own the user.txt and root.txt, which, after enumerating the users on the system, are "app" for the user.txt and "administrator" for the root.txt.
+Googling a bit around, we find a powershell method that is called ConvertFrom-SecureString, and ConvertTo-SecureString. In particular we would need to import the correct credentials with $creds = Import-CliXml -path C:\\Users\\app\\user.txt. The current credential of our shell don't work as we are in as the user omni. We so need to find a way to get a shell back as the users needed who actually own the user.txt and root.txt, which, after enumerating the users on the system, appear to be "app" for the user.txt and "administrator" for the root.txt.
 
 # Enumeration (again!)
 
@@ -89,7 +89,7 @@ After browsing around we can see that there is a way to run commands. Remebering
 
 <img align="center" src="/assets/images/htb_omni/reverse_shell2.png" style="width:80%;">
 
-Now, depending on which credential set we used to login (e.g. app or administrator) we will have a differen environment username, which allows us to view only the password associated to that specific user. So, to recap, we login as app. Note: in this case I had some problem when uploading the netcat executable inside C:\Windows\Temp, as it was working when using the shell as administrator but not for the user. Uploading netcat inside C:\Users\Public instead made it work for both of them.
+Now, depending on which credential set we used to login (e.g. app or administrator) we will have a different environment username, which allows us to view only the password associated to that specific user. So, to recap, we login as app. Note: in this case I had some problem when uploading the netcat executable inside C:\Windows\Temp, as it was working when using the shell as administrator but not for the user. Uploading netcat inside C:\Users\Public instead made it work for both of them.
 
 <img align="center" src="/assets/images/htb_omni/revs_app.png" style="width:80%;">
 
