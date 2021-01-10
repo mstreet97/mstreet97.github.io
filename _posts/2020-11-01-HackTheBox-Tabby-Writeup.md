@@ -10,6 +10,7 @@ Now, giving the name and logo, which is usually hint about the machine, I expect
 
 <img align="center" src="/assets/images/htb_tabby/tabby_logo.png" style="width:80%;">
 
+# Enumeration
 As usual, we start off with a nmap SYN scan on all ports, and in the meantime grab a coffee.
 Nmap finds ports 22 (ssh), 80 (apache) and, as expected, 8080 (tomcat).
 
@@ -30,6 +31,7 @@ While navigating with Burp spider in the background we get to news.php page, whi
 
 <img align="center" src="/assets/images/htb_tabby/burp_lfi.png" style="width:80%;">
 
+# Exploitation
 We try to get the /etc/passwd file and we succeed, so news.php is vulnerable to lfi and we also discovered a username, ash, which might be useful for ssh.
 I tried to include ash's id_rsa but it wasn't possible probably because of file permissions.
 
@@ -67,6 +69,7 @@ Once in ash's home we can cat user.txt.
 
 <img align="center" src="/assets/images/htb_tabby/ash_home.png" style="width:80%;">
 
+# Privilege Escalation
 Now that we are Ash, we need to escalate to root. Since we already have a linpeas.sh script on the machine why not re-running it?
 LinPEAS immediately points to the lxd group which ash is part of.
 

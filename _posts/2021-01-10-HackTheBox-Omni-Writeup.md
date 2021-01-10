@@ -1,5 +1,5 @@
 ---
-title: HackTheBox Tabby Writeup
+title: HackTheBox Omni Writeup
 author: mstreet
 layout: post
 ---
