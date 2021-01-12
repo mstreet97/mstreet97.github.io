@@ -17,10 +17,12 @@ Another cool thing about RangeForce is that they provide 20 modules for free. In
 If you want to try it out, give it a go for free [link](https://go.rangeforce.com/free-cyber-security-training-community-edition)!
 
 # Blueteam Star Challenge
-When I signed up for the free Community Edition (9th December 2020) I received an email shortly after about the Blueteam Star Challenge. Basically the Blueteam Star Challenge is a competition lasting for weeks from the 11th December 2020 to the 10th January 2021 composed of three challenges heavily blue team oriented: 
+When I signed up for the free Community Edition (9th December 2020) I received an email shortly after about the Blueteam Star Challenge. Basically the Blueteam Star Challenge is a competition lasting four weeks from the 11th December 2020 to the 10th January 2021 composed of three challenges heavily blue team oriented: 
 - Threat Intel Challenge: Determine where potential threats exist and who tampered with a website’s source code.
 - Obfuscation Challenge: Investigate and unravel a targeted attack against your company’s infrastructure.
-- Multi-Attack Challenge: Work to protect your organization against a complicated series of targeted attacks
+- Multi-Attack Challenge: Work to protect your organization against a complicated series of targeted attacks.
+
+To give a more deep insight on the challenges, in the first a breach to a webserver had to be investigated and traced back to its origin thanks to the log analysis performed with Splunk. The Obfuscation instead had a piece of malware written in powershell that had been obfuscated with various techniques and needed to be un-obfuscated. Finally, in the Multi-Attack you were thrown into a live environment with multiple attacks going on and which you needed to stop: a phishing campaign, some bruteforcing attempts against a ssh server and finally a mass port scan. These three attacks were completed using various tools, but mainly: iptables, Suricata and fail2ban.
 
 The cool part is that signing up for the challenge is free and there were prizes for the participants, in particular:
 - Cyber-elite Prize: The first 100 competitors to complete all three challenges will win a $100 Amazon Gift Card.
