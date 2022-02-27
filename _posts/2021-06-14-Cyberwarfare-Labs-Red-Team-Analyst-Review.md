@@ -21,8 +21,10 @@ The exam overall was very fun! It was not too difficult if you study well the ma
 
 # Final thoughts
 I didn't know of Cyberwarfare Labs before this experience, and I signed up basically blindly because they offered a beginner friendly and cheap option to start exploring red team tactics. I overall really enjoyed this course and honestly do not have anything to complain about. I will summarize the pros and cons as follows.
+
 Cons:
 - Just one, the slides material would maybe need slightly more polishing as there were a couple of typos here and there. Same reasoning goes for the videos.
+
 Pros:
 - I feel that this course provides an option that wasn't there before: a real beginner red teaming course, which gives a very gentle introduction to red teaming and it's perfect to be taken before either Cyberwarfare Labs' Red Team Specialist or PentesterAcademy's CRTP
 - The price point is stellar: you get all the materials plus 30 days lab access (which is more than enough for me) for 99$, an offer that's hard to beat
