@@ -5,7 +5,7 @@ layout: post
 ---
 # Introduction
 After completing the eWPT I was looking for a cert that would give me some foundations on active directory as it had not been touched in the courses I had taken previously. I discovered Cyberwarfare Labs as they were just starting out and enrolled straight away in their Red Team Analyst course which was presented as a beginner red teaming course. It seemed an ideal to learn the basics before moving on to more difficult options such as CRTP from PentesterAcademy or the Red Team Specialist also from Cyberwarfare Labs.
-<img align="center" src="/assets/images/ccrta/cwl-logo.jpeg" style="width:80%;">
+<img align="center" src="/assets/images/ccrta/cwl-logo.jpeg" style="width:30%;">
 
 # Course Content
 The course includes a 170 pages pdf along with around 8 hours of videos going through the concepts explained in the slides. They give a broad overview of pentesting and some very quick info about the basics such as port scanning and web hacking as well as the basics of how a red team is conducted. Once exhausted those arguments the material dives directly into the fun part which is Active Directory. It provides an overview of how AD works, how kerberos is used for authentication parent-child and domain trusts. Then it goes through the basic enumeration of AD with PowerView, and its PrivEsc with PowerUp as well as attacks such as kerberoasting, pivoting via powershell remoting and persistence attacks such as golden/silver tickets and dcsyncs. 
