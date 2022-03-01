@@ -5,7 +5,7 @@ layout: post
 ---
 # Introduction
 So, I took 6 months of "break" from certification in order to be able to finish my dissertation and graduate from the double masters' degree and UniTn and TUBerlin I was taking. After that I planned on taking the OSCP, that my company very kindly gifted me, but still I wanted to have some more preparation before that. After reading quite a few positive reviews for VHL I decided that going for the three months of VHL subscription would be a good idea, as I could finish it by the end of 2021, have fun and jump start my preparation for OSCP. 
-<img align="center" src="/assets/images/vhl/logo.jpeg" style="width:80%;">
+<img align="center" src="/assets/images/vhl/logo.jpg" style="width:80%;">
 
 # Course Content
 The course is structured with a ~400 pages pdf that teaches the basic concepts of penetration testing. It covers everything that is needed from information gathering to enumeration, from exploitation to privilege escalation. The content was enough to get started and I found it to be very well made as it introduces every necessary concept in a very clear manner and from a high level perspective, diving deeper into other more critical areas. While I knew already more or less everything that was taught there, I still went back to the material every now and then when stuck on a specific machine. Each time I had to do this, I usually found some very good pointers in there and was able to get unstuck and proceed with exploitation. 
