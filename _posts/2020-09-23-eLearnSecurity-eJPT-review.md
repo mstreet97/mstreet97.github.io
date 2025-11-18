@@ -1,0 +1,33 @@
+---
+title: eLearnSecurity eJPT Review
+author: mstreet
+layout: post
+---
+# Introduction
+After months of self study, reading books, watching videos and experimenting with HackTheBox and TryHackMe I decided to adopt a more rigorous approach and try a structured learning experience. While searching around the interwebs I stumbled upon eLearnSecurity. 
+<img align="right" src="/assets/images/ejpt/ejpt_logo.png">
+I didn't know them before, so I started doing my researches and from what I've read while lesser known that other like OffSec or EC-Council, they were highly touted for the quality of their courseware, furthermore they feature a unique exam: 3 days fully practical exam, and not the usual memorize-and-answer multiple choice question. The PTS, penetration testing student, along with its exam, eJPT, is the first of their Network Security and Web Security training paths, posing as a foundation to gain all preliminary skills needed in this field. Seeing the cost wasn't prohibitive, 500$ for the Elite version, I decided to give it a go, so here is my experience! (NOTE: they frequently have discounts running, so be sure to check their social accounts).
+# Course Content
+You can find the course syllabus in detail on eLearnSecurity's website, but they organized the work into three macro sections:
+- Preliminary Skills, Prerequites: they start from the very beginning, talking about hackers' culture, careers opportunities, how the course works, networking (and this part is really well done in my opinion), web applications and finally penetration testing.
+- Preliminary Skills, Programming: here they give an overview of low and high level programming languages, and they give an overview of the main components, such as variable, functions, loops, etc. They then proceed in explaining the aforementioned more in details for C++, Python, Bash and Windows CMD.
+- Penetration Testing: now that the basics are covered the fun part begins. They give a presentation of each phase (information gathering, scanning, vulnerability assessment, web, system and network attacks) and finally give some advice regarding which steps to take next, after the completion of this course.  
+
+So, I really liked the course content. The online HTML5 slides are easy to use and have a nice layout. They are not crammed with words and go straight to the point. They might be light on some subject but that is to be expected, as this is an entry level certification, and as such there is absolutely no point in overloading the students, especially if coming from a non technical background. The fact that they begin by building the necessary prerequisite for me is and extremely good thing, so that each student can be sure that if he got the basics covered he can proceed into the more fun stuff without risking of getting stuck. Furthermore, when presenting the basics, there is always an eye on the attacking side of each, which for me is simply awesome!
+More in detail for the penetration testing section, they present each step in a clear and concise manner. There is some more emphasis on web attacks, which in my opinion is a plus and also a light introduciton of buffer overflows. They finalize everything by giving some advice on what to do next and also career paths.
+# Laboratories
+There are 19 labs which are mostly self contained, each of them in fact cover a particular aspect, e.g. python programming or password bruteforcing and as such explain the subject in a detailed matter. Finally the last three labs are simulation scenarios of what you would find in the exam: they are networks of multiple machines which you have to fully compromise without particular rules to follow. 
+The cool part about the labs is that you have a specific amount of lab hours to use, which allows to really study on demand, adapting your certification schedule to eventual unforseen events or whatever might hold you back. The labs are also dedicated, you will be alone in each of them, so that there isn't the risk of another student accidentally crashing the machine you're working on. On the downside, I find the fact of having to generate a new vpn connection pack each time you reset the lab a bit clumsy, but that's only because I'm personally lazy.
+# Exam
+The exam is structured as a 3 day black box penetration testing. You are provided with a letter of engagement which defines the scope, and a series of questions which need to be answered by completing the assessment. The exam will test EVERYTHING that is covered in the course, from web to network security and to get some answers you will need to be a bit creative. The questions to be answered are multiple choice, BUT they require you to perform the actual pentest, an example question could be: "What's the name of the file on user Admin desktop?". The passing score is >75%, which gives some margin if things go south.
+I really really enjoyed the exam as it required to really have an understanding of what were you doing and why and also because it implied different techniques and challenges.
+Some tips I can give without breaking the NDA are:
+- enumerate. For real, this is critical and will always be
+- If you get stuck, use the exam questions as guidance 
+- If you are still stuck review the training material, 95% of the exam has been explained and if you still don't know what to do, well, usually google has an answer
+- Take breaks and for whatever reason DON'T get angry, if something is not working it is either not the way to go or you're doing it wrong
+- Finally, enjoy, really, have fun, and try to learn. Remember that if you fail you have at least one other attempt depending on your course plan, so really, enjoy!  
+
+# Final thoughts
+Overall, I thoroughly enjoyed this course. It is the most gentle introduction to penetration testing while still teaching well. For me most of the material wasn't new, having done a lot of self study in the previous months. Nevertheless I learnt some new tricks and most of all had fun, which to me is the most important part. The certification you get is shareable on linkedin and makes a nice impression on your CV and this is due to the all practical exam. So, finally, is this certification for you? Well, fortunately, in the infosec field you can learn almost everything for free by leveraging the high amount of online resources, but if you prefer a structured learning approach, then you should really consider eJPT. The price is fair (and with the frequent coupons can be lowered even more) and it will be a real benchmark to also understand if penetration testing is what you really want to do.
+That said, here is the course [link](https://www.elearnsecurity.com/course/penetration_testing_student/), be sure to check it out!
