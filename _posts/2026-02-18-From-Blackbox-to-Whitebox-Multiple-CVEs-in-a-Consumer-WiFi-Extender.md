@@ -1,9 +1,9 @@
 ---
 layout: post
 title: "From Blackbox Testing to Firmware Reversal: Multiple CVEs in a Consumer WiFi Extender"
-date: 2026-02-18
-categories: [security-research, iot, vulnerability-disclosure]
-tags: [CVE, IoT, embedded, firmware, reverse-engineering]
+author: Matteo Strada (mstreet)
+categories: [security-research, iot, vulnerability-disclosure, cybersecurity, cve]
+tags: [CVE, IoT, embedded, firmware, reverse-engineering, CVE-2026-30701, CVE-2026-30702, CVE-2026-30703, CVE-2026-30704]
 ---
 
 ## Summary
