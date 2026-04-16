@@ -25,7 +25,9 @@ All vulnerabilities have been responsibly disclosed and assigned individual CVE 
 - Firmware version: LFMZX28040922V1.02  
 
 Front view:
-<img align="center" src="/assets/images/multiple_cves_in_wifi_extender/front.jpg" style="width:60%;">
+<div align="center">
+    <img src="/assets/images/multiple_cves_in_wifi_extender/front.jpg" style="width:60%;">
+</div>
 
 Back view:
 <img align="center" src="/assets/images/multiple_cves_in_wifi_extender/back.jpg" style="width:60%;">
