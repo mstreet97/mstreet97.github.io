@@ -269,6 +269,7 @@ parameter seems like the entry point. Let's fire up Ghidra and see if I can cont
     <img src="/assets/images/multiple_cves_in_wifi_extender/command-injection-1.png" style="width:90%;"> 
 </div>
 
+
 From Ghidra, it seems like my intuition was correct. By searching for the do_system functions, I stumbled upon the set_sys_cmd function, which calls web_get and assigns the value of the "command" parameter to the pcVar1 parameter. This then gets passed straight into sh and thus I can control and inject the OS command I want. So, I have our OS Command injection. 
 
 What about the call to the webpage? By looking for sysCMD, I see this inside the main() function:
