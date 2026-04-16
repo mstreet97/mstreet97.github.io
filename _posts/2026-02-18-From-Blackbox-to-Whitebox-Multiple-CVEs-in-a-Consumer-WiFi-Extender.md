@@ -44,7 +44,7 @@ Back view:
 I started the research with a standard blackbox analysis of the embedded web management interface exposed by the device.
 
 <div align="center">
-    <img src="/assets/images/multiple_cves_in_wifi_extender/login-interface.png" style="width:60%;"> 
+    <img src="/assets/images/multiple_cves_in_wifi_extender/login-interface.png" style="width:70%;"> 
 </div>
 
 Early testing revealed that:
@@ -62,7 +62,7 @@ While exploring the web interface, it became clear that authentication controls 
 I was able to simply bypass the authentication by force browsing the admin interface without cookies, as can be seen here: 
 
 <div align="center">
-    <img src="/assets/images/multiple_cves_in_wifi_extender/broken-auth.png" style="width:60%;"> 
+    <img src="/assets/images/multiple_cves_in_wifi_extender/broken-auth.png" style="width:70%;"> 
 </div>
 
 This gives full admin access to the webapp, and from here I can update the firmware, change the admin password and do whatever admin functionality I want. 
@@ -71,13 +71,13 @@ This issue represents a logic flaw in the authentication mechanism, effectively 
 As if not bad enough, the actual admin password can also be found also in the webpage:
 
 <div align="center">
-    <img src="/assets/images/multiple_cves_in_wifi_extender/hardcoded-pass-1.png" style="width:60%;">
+    <img src="/assets/images/multiple_cves_in_wifi_extender/hardcoded-pass-1.png" style="width:70%;">
 </div>
 
 This was confirmed later, after extracting the actual source code of the webserver files. The current admin password is included in the webpage in the form of SSI directives:
 
 <div align="center">
-    <img src="/assets/images/multiple_cves_in_wifi_extender/hardcoded-pass-2.png" style="width:60%;">
+    <img src="/assets/images/multiple_cves_in_wifi_extender/hardcoded-pass-2.png" style="width:70%;">
 </div>
 
 Assigned CVE: CVE-2026-30701 *Hardcoded Web Credentials Disclosure* and CVE-2026-30702 *Authentication Bypass in Web Management Interface* 
@@ -120,14 +120,14 @@ As can be seen, an ID for the device was present: WDR201A as well as a version: 
 Looking up the SoC, I could see from the schematics that I could access the UART port if available.
 
 <div align="center">
-    <img src="/assets/images/multiple_cves_in_wifi_extender/mediatek_datasheet-1.png" style="width:60%;">
+    <img src="/assets/images/multiple_cves_in_wifi_extender/mediatek_datasheet-1.png" style="width:70%;">
 </div>
 
 This SoC also has the JTAG pins that are shared with the LEDs. According to the schematics, I can enable the JTAG interface via a bootstrap pin. Might be a pain to do so, but if the UART route fails, that's another idea.
 
 <div align="center">
-    <img src="/assets/images/multiple_cves_in_wifi_extender/mediatek_datasheet-2.png" style="width:60%;">
-    <img src="/assets/images/multiple_cves_in_wifi_extender/mediatek_datasheet-3.png" style="width:60%;">
+    <img src="/assets/images/multiple_cves_in_wifi_extender/mediatek_datasheet-2.png" style="width:70%;">
+    <img src="/assets/images/multiple_cves_in_wifi_extender/mediatek_datasheet-3.png" style="width:70%;">
 </div>
 
 Finally, if all else fails, I'll just desolder the SPI chip, dump its content, and solder it back, crossing my fingers that the device can still be used.
@@ -167,7 +167,7 @@ I was able to gather the full Boot log. Interesting parts are as follows, in par
 The mtd partitions addresses:
 
 <div align="center">
-    <img src="/assets/images/multiple_cves_in_wifi_extender/partitions.png" style="width:60%;"> 
+    <img src="/assets/images/multiple_cves_in_wifi_extender/partitions.png" style="width:70%;"> 
 </div>
 
 After the boot procedure was done, I was presented with a login prompt protecting the device.
@@ -181,13 +181,13 @@ In fact, with the help of the md command, and a couple hours to spare, I was abl
 So, after getting access to the U-Boot console, I can proceeded as follows. I opened two terminal windows, and set one to dump into a text file everything that comes from the UART connection, via /dev/ttyACM0:
 
 <div align="center">
-    <img src="/assets/images/multiple_cves_in_wifi_extender/uart-fw-dump-md1.png" style="width:60%;"> 
+    <img src="/assets/images/multiple_cves_in_wifi_extender/uart-fw-dump-md1.png" style="width:70%;"> 
 </div>
 
 In the other terminal window, I can interact with UBoot by sending the commands I need. At first I sent a space to check that it's working, and then I used md.b to print all memory as text:
 
 <div align="center">
-    <img src="/assets/images/multiple_cves_in_wifi_extender/uart-fw-dump-md2.png" style="width:60%;"> 
+    <img src="/assets/images/multiple_cves_in_wifi_extender/uart-fw-dump-md2.png" style="width:70%;"> 
 </div>
 
 I now have the full dump with some trailing strings that I don't need:
@@ -199,7 +199,7 @@ I now have the full dump with some trailing strings that I don't need:
 After cleaning the files from the unnecessary trailing lines, I can convert the hexdump into an actual bin:
 
 <div align="center">
-    <img src="/assets/images/multiple_cves_in_wifi_extender/uart-fw-dump-md5.png" style="width:60%;"> 
+    <img src="/assets/images/multiple_cves_in_wifi_extender/uart-fw-dump-md5.png" style="width:90%;"> 
 </div>
 
 At last, I have the full firmware binary to play with!
@@ -217,13 +217,13 @@ Now that I had the full firmware at my disposal, I can simply analyze it and see
 As usual, binwalk is the main ally, and thus I extracted the whole firmware from there:
 
 <div align="center">
-    <img src="/assets/images/multiple_cves_in_wifi_extender/fw_dump-1.png" style="width:60%;"> 
+    <img src="/assets/images/multiple_cves_in_wifi_extender/fw_dump-1.png" style="width:90%;"> 
 </div>
 
 I have the full filesystem at my disposal:
 
 <div align="center">
-    <img src="/assets/images/multiple_cves_in_wifi_extender/fw_dump-2.png" style="width:60%;"> 
+    <img src="/assets/images/multiple_cves_in_wifi_extender/fw_dump-2.png" style="width:80%;"> 
 </div>
 
 Interestingly enough, there is nothing inside the etc folder, while the etc_ro (I bet ro is for read only) contains the whole files and binaries related to the webserver, on which we need to hunt for the RCE:
@@ -266,7 +266,7 @@ sysCMD
 parameter seems like the entry point. Let's fire up Ghidra and see if I can control such parameters.
 
 <div align="center">
-    <img src="/assets/images/multiple_cves_in_wifi_extender/command-injection-1.png" style="width:60%;"> 
+    <img src="/assets/images/multiple_cves_in_wifi_extender/command-injection-1.png" style="width:80%;"> 
 </div>
 
 From Ghidra, it seems like my intuition was correct. By searching for the do_system functions, I stumbled upon the set_sys_cmd function, which calls web_get and assigns the value of the "command" parameter to the pcVar1 parameter. This then gets passed straight into sh and thus I can control and inject the OS command I want. So, I have our OS Command injection. 
@@ -287,13 +287,13 @@ Let's use BurpSuite as usual as a web proxy to visualize the requests correctly.
 So, at first I noticed that I was getting a 302 redirect and thus tried some Out Of Band payloads to confirm the injection. I tried to ping my assigned IP:
 
 <div align="center">
-    <img src="/assets/images/multiple_cves_in_wifi_extender/rce-blind-1.png" style="width:60%;"> 
+    <img src="/assets/images/multiple_cves_in_wifi_extender/rce-blind-1.png" style="width:80%;"> 
 </div>
 
 And I saw that I'm getting the ICMP messages in wireshark, thus the OS Command injection is working! (I sent 7 packets and I see the 14 ICMP messages, 7 requests and 7 replies).
 
 <div align="center">
-    <img src="/assets/images/multiple_cves_in_wifi_extender/rce-blind-2.png" style="width:60%;"> 
+    <img src="/assets/images/multiple_cves_in_wifi_extender/rce-blind-2.png" style="width:80%;"> 
 </div>
 
 Can we do better than this? Of course we can!
@@ -308,13 +308,13 @@ I've noticed that, by appending:
 I get the output of the first command right in the webpage. I'm not entirely sure about this behaviour: either the webpage includes the log file with the output of the command, or the sleep triggers a race condition by slowing down the execution and thus the output is shown before the HTTP redirect gets triggered. Anyhow, great success for me, as I don't have to work out of band.
 
 <div align="center">
-    <img src="/assets/images/multiple_cves_in_wifi_extender/rce-output-0.png" style="width:60%;">
+    <img src="/assets/images/multiple_cves_in_wifi_extender/rce-output-0.png" style="width:80%;">
 </div>
 
 And again I can get the /etc/passwd file that's build on the fly and not available from the firmware:
 
 <div align="center">
-    <img src="/assets/images/multiple_cves_in_wifi_extender/rce-output-1.png" style="width:60%;">
+    <img src="/assets/images/multiple_cves_in_wifi_extender/rce-output-1.png" style="width:80%;">
 </div>
 
 Now it's time to plant a backdoor and get an actual shell on the target.
@@ -325,13 +325,13 @@ echo 'mstreet::0:0:root:/root:/bin/sh' >> /etc/passwd && sleep 2
 ```
 
 <div align="center">
-    <img src="/assets/images/multiple_cves_in_wifi_extender/backdoor-1.png" style="width:60%;">
+    <img src="/assets/images/multiple_cves_in_wifi_extender/backdoor-1.png" style="width:80%;">
 </div>
 
 Now I can simply login via telnet, using the username 'mstreet' and without supplying a password to get an interactive shell on the target!
 
 <div align="center">
-    <img src="/assets/images/multiple_cves_in_wifi_extender/backdoor-3.png" style="width:60%;">
+    <img src="/assets/images/multiple_cves_in_wifi_extender/backdoor-3.png" style="width:80%;">
 </div>
 
 Assigned CVE: CVE-2026-30703 *OS Command Injection Leading to Remote Code Execution*
