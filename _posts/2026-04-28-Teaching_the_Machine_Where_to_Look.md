@@ -139,30 +139,9 @@ The most efficient way that came to my mind to hunt for these vulnerabilities, w
 4. Note the dispatch mechanism: which handler runs depends on a dispatch key parsed from the POST body. Different CGIs use different keys.
 
 Visually it looks like this:
-```text
-ATTACK SURFACE                              CODE FLOW
-
-  ┌────────────────────┐                ┌────────────────────────┐
-  │  do_system()       │ ◄────── 1.     │  Enumerate all callers │
-  │  popen()           │                │  via Ghidra refs       │
-  │  execve()          │                └────────────────────────┘
-  │  system()          │
-  └─────────┬──────────┘
-            │ ◄────── 2.     "format string %s args populated by what?"
-            │
-  ┌─────────▼──────────┐
-  │  Local variables   │
-  │  inside handler    │
-  └─────────┬──────────┘
-            │ ◄────── 3.     "any sanitization between source and sink?"
-            │                  ├─ regex whitelist? 
-            │                  ├─ strchr blacklist?
-            │                  └─ format validator?
-  ┌─────────▼──────────┐
-  │  web_get(key,...)  │ ◄────── 4.     "what's the dispatch key?"
-  │  Source: POST body │                  ├─ page=<handler>?
-  └────────────────────┘                  └─ firewall=<handler>?
-```
+<div align="center">
+    <img src="/assets/images/teaching_the_machine_where_to_look/attack_methodology.png" style="width:80%;">
+</div>
 
 After prompting Claude with these requirements, I set up a VM with Ghidra, radare and the needed tools. Claude wrote a headless Jython script that automated steps 1 and 2: it walks every binary, finds the call sites of do_system/popen/system/execve, decompiles each calling function, and extracts both the source functions referenced (web_get, getenv, fgets...) and the literal format strings present. Steps 3 and 4, sanitization detection and dispatch-key identification, required reading the decompiled C and were done manually with the JSON output as a guide. 
 
@@ -320,36 +299,9 @@ do_system("iptables -A web_filter -p tcp -m tcp -m webstr --url %s "
 A single successful command injection is sufficient to write the payload to NVRAM. The payload re-executes every time any request hits `firewall.cgi`, because `main()` always calls `iptablesWebsFilterRun()` in its initialization block regardless of which handler was dispatched. In practice this gives an implicit persistence as the first request plants the payload but every subsequent request to any firewall.cgi handler re-runs it.
 
 Here is a visualization of the persistence mechanism:
-```text
-INITIAL REQUEST                         ANY SUBSEQUENT REQUEST
-(websURLFilter handler)                 (any handler on firewall.cgi)
-
-  Attacker                                  Anyone
-     │                                        │
-     │ POST firewall=websURLFilter            │ POST firewall=<anything>
-     │   addURLFilter=PAYLOAD                 │
-     ▼                                        ▼
-  ┌──────────────┐                         ┌─────────────┐
-  │ websURLFilter│                         │  main()     │
-  │   handler    │                         │  init block │
-  └──────┬───────┘                         └──────┬──────┘
-         │                                        │
-         │ nvram_bufset(                          │ iptablesWebsFilterRun()
-         │   "websURLFilters",                    │   reads NVRAM
-         │   PAYLOAD)                             │
-         │ nvram_commit()                         │
-         ▼                                        ▼
-  ┌─────────────────────────────────────────────────┐
-  │           NVRAM (persistent storage)            │
-  │   websURLFilters = "1.1.1.1$(ping ...)"         │
-  └─────────────────────────────────────────────────┘
-                                                  │
-                                                  ▼
-                                    do_system("iptables ... %s", PAYLOAD)
-                                                  │
-                                                  ▼
-                                            🔥 RCE re-executes
-```
+<div align="center">
+    <img src="/assets/images/teaching_the_machine_where_to_look/persistence_mechanism.png" style="width:80%;">
+</div>
 
 To clean up after testing, one needs to send a follow-up request with an empty value for the corresponding NVRAM key, or the payload keeps firing on every firewall.cgi hit until the device is factory-reset.
 
@@ -461,29 +413,9 @@ With the buffer starting at `sp + 0x38`, the layout inside `main()`'s frame look
 So the 556th byte of the POST body lands exactly on the first byte of saved `$ra`. For `makeRequest.cgi` the arithmetic differs slightly - buffer at `sp + 0x40`, frame `0x258`, saved `ra` at `sp + 0x254` → RA offset = 532.
 
 To visualize better, here's a schema of the stack:
-```text
-+------------------+  ← sp + 0x000
-|  acStack_230     |  buffer start, 512 bytes
-|  (POST body)     |
-|  bytes 0..511    |
-+------------------+  ← sp + 0x238  (byte 512 from buffer)
-|  saved a1        |
-+------------------+  ← sp + 0x240  (byte 520)
-|  saved s0        |
-|  ...             |
-|  saved s5        |
-+------------------+  ← sp + 0x258  (byte 544)
-|  saved s6  ★     |  ← attacker-controlled (= &system)
-+------------------+  ← sp + 0x25c  (byte 548)
-|  saved s7        |
-+------------------+  ← sp + 0x260  (byte 552)
-|  saved fp        |
-+------------------+  ← sp + 0x264  (byte 556) ★★
-|  saved $ra       |  ← attacker-controlled (= &gadget)
-+------------------+  ← sp + 0x268
-|  shell command   |  ← byte 584 (sp + 0x18 after epilogue)
-+------------------+
-```
+<div align="center">
+    <img src="/assets/images/teaching_the_machine_where_to_look/stack_layout.png" style="width:80%;">
+</div>
 
 ### Confirming the offset empirically: the sweep test
 
