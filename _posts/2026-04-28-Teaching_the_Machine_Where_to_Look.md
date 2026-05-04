@@ -9,11 +9,9 @@ tags: [CVE, IoT, embedded, firmware, reverse-engineering, Ghidra, Claude, comman
 
 
 This research started as a simple evening session with my colleague and friend Daniele Berardinelli (check out his blog [here](https://berardinellidaniele.com/)), looking at the cheap consumer Wi-Fi extender I had already tested before (in case you missed it, the first part is [available here](https://mstreet97.github.io/security-research/iot/vulnerability-disclosure/cybersecurity/cve/2026/02/18/From-Blackbox-to-Whitebox-Multiple-CVEs-in-a-Consumer-WiFi-Extender.html)).
-
 The goal wasn't particularly ambitious, just to explore the attack surface more in depth and see what else could be found.
 
 A few hours later, we had multiple command injection vulnerabilities, and after a while more, I realized that these vulnerabilities were following a specific pattern.
-
 At that point, the problem shifted from finding bugs to scaling their discovery, teaching the machine where to look.
 
 The initial findings and the final Stack-Based BoF were identified together with Daniele, while the subsequent pattern-driven analysis and exploitation work were carried out individually.
