@@ -8,9 +8,7 @@ tags: [CVE, IoT, embedded, firmware, reverse-engineering, Ghidra, Claude, comman
 ---
 
 
-# Teaching the Machine Where to Look: Scaling Embedded Vulnerability Research with AI
-
-This started as a simple evening session with my colleague and friend Daniele Berardinelli (check out his blog [here](https://berardinellidaniele.com/)), looking at the cheap consumer Wi-Fi extender I had already tested before (in case you missed it, the first part is [available here](https://mstreet97.github.io/security-research/iot/vulnerability-disclosure/cybersecurity/cve/2026/02/18/From-Blackbox-to-Whitebox-Multiple-CVEs-in-a-Consumer-WiFi-Extender.html)).
+This research started as a simple evening session with my colleague and friend Daniele Berardinelli (check out his blog [here](https://berardinellidaniele.com/)), looking at the cheap consumer Wi-Fi extender I had already tested before (in case you missed it, the first part is [available here](https://mstreet97.github.io/security-research/iot/vulnerability-disclosure/cybersecurity/cve/2026/02/18/From-Blackbox-to-Whitebox-Multiple-CVEs-in-a-Consumer-WiFi-Extender.html)).
 
 The goal wasn't particularly ambitious, just to explore the attack surface more in depth and see what else could be found.
 
