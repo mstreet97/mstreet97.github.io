@@ -53,8 +53,8 @@ $ readelf -d firewall.cgi | grep NEEDED
 
 `libwebutil.so` exports the two functions that matter for this audit:
 
-- `web_get(key, body, flag)` — URL-form-decodes the POST body, returns the value for `key`
-- `do_system(fmt, ...)` — printf's its arguments into a static buffer, then passes it to `system()`
+- `web_get(key, body, flag)` - URL-form-decodes the POST body, returns the value for `key`
+- `do_system(fmt, ...)` - printf's its arguments into a static buffer, then passes it to `system()`
 
 Both functions are called from every CGI binary. The question "where can an attacker inject shell metacharacters?" reduces almost entirely to the question "where does a `web_get()` return value flow into a `do_system()` format argument without sanitization?"
 
@@ -64,7 +64,7 @@ This is where Daniele and I started to manually look into the target CGIs. The i
 
 Three of the ten findings turned out to be command injections with **no sanitization at all** between `web_get` and `do_system`. The exploits work with a literal semicolon with no shell tricks needed. Listed here roughly in order of how we encountered them.
 
-### Finding 1: `wireless.cgi` - `sz11gChannel` (page=basic) and `PIN` (page=WPS)
+### Finding 1: wireless.cgi - sz11gChannel (page=basic) and PIN (page=WPS)
 
 Decompilation of `set_wifi_basic` yielded this:
 
@@ -103,7 +103,7 @@ curl -s -X POST http://DEVICE-IP/cgi-bin/wireless.cgi \
 
 Assigned CVE: CVE-2026-41922 **OS Command Injection in wireless.cgi**
 
-### Finding 2: `internet.cgi` — `gateway` (page=addrouting)
+### Finding 2: internet.cgi - gateway (page=addrouting)
 
 `set_add_routing` builds an `ip route add` command and passes it to `popen`:
 
@@ -169,7 +169,7 @@ After prompting Claude with these requirements, I set up a VM with Ghidra, radar
 Of course, the outputs were to be manually checked as to avoid false positives and validated against the actual hardware.
 Let's see what else it found.
 
-### Finding 3: `adm.cgi` — `reboot_time` (page=reboot_time)
+### Finding 3: adm.cgi - reboot_time (page=reboot_time)
 
 Let's start out from the standard, the exact pattern that Daniele and I found. Claude had no issue in replicating it.
 
@@ -195,12 +195,12 @@ Claude found it, I confirmed it on the actual hardware. The experiment was worki
 As a bonus in this case, since it's again adm.cgi, the output gets weirdly reflected in the HTTP response. Much like page=sysCMD of CVE-2026-30703. Why this happens is still beyond me, though I stand by my theories of the original post, but gives a nicer way of seeing the command output, as can be seen here:
 
 <div align="center">
-    <img src="/assets/images/teaching_the_machine_where_to_look/command-injection-adm-cgi-reboot-time.png" style="width:70%;">
+    <img src="/assets/images/teaching_the_machine_where_to_look/command-injection-adm-cgi-reboot-time.png" style="width:80%;">
 </div>
 
 Assigned CVE: CVE-2026-41925 **OS Command Injection in adm.cgi**
 
-## Finding 4 aka the non-standard dispatch: `makeRequest.cgi`
+## Finding 4 aka the non-standard dispatch: makeRequest.cgi
 
 What about "non standard" requests? Or something that diverges from the pattern I told Claude?
 
@@ -240,7 +240,7 @@ This took a bit of back and forth. Claude initially found the sink by looking fo
 
 Assigned CVE: CVE-2026-41924 **OS Command Injection in makeRequest.cgi**
 
-## Finding 5 aka the surprise: `firewall.cgi` dispatches on a different key
+## Finding 5 aka the surprise: firewall.cgi dispatches on a different key
 
 Now let’s put everything together: non standard web dispatches and some sort of sanitization. 
 
@@ -278,7 +278,7 @@ curl -s -X POST http://TARGET-IP/cgi-bin/firewall.cgi \
   dFromPort=0&dToPort=0&action=1&comment=x'
 ```
 
-### Handlers with a `strchr(';')`-only filter
+### Handlers with a strchr(';')-only filter
 
 `websURLFilter`, `websHostFilter`, and `portForward` each apply a single `strchr` blacklist:
 
@@ -367,12 +367,12 @@ sudo tcpdump -i eth0 'icmp and host 192.168.188.100' -nn -v
 ```
 
 <div align="center">
-    <img src="/assets/images/teaching_the_machine_where_to_look/makerequest_poc.png" style="width:70%;">
+    <img src="/assets/images/teaching_the_machine_where_to_look/makerequest_poc.png" style="width:80%;">
 </div>
 
 For the in band injections:
 <div align="center">
-    <img src="/assets/images/teaching_the_machine_where_to_look/internet_poc.png" style="width:70%;">
+    <img src="/assets/images/teaching_the_machine_where_to_look/internet_poc.png" style="width:80%;">
 </div>
 
 
@@ -458,7 +458,7 @@ With the buffer starting at `sp + 0x38`, the layout inside `main()`'s frame look
 | saved `fp` | `sp + 0x260` | 552 |
 | **saved `$ra`** | **`sp + 0x264`** | **556** |
 
-So the 556th byte of the POST body lands exactly on the first byte of saved `$ra`. For `makeRequest.cgi` the arithmetic differs slightly — buffer at `sp + 0x40`, frame `0x258`, saved `ra` at `sp + 0x254` → RA offset = 532.
+So the 556th byte of the POST body lands exactly on the first byte of saved `$ra`. For `makeRequest.cgi` the arithmetic differs slightly - buffer at `sp + 0x40`, frame `0x258`, saved `ra` at `sp + 0x254` → RA offset = 532.
 
 To visualize better, here's a schema of the stack:
 ```text
@@ -517,7 +517,7 @@ The transition at **byte 556** is precisely the RA offset the static analysis pr
 
 So the "HTTP 200" response is, paradoxically, evidence of a crash: if the CGI had returned normally, it would have flushed its buffered 302.
 
-## Proving `$ra` is attacker-controlled
+## Proving $ra is attacker-controlled
 
 The sweep establishes that byte 556 is special, but to claim full control of `$ra` we need direct kernel-level evidence. MIPS Linux will print a register dump on SIGSEGV if `print-fatal-signals` is enabled.
 
@@ -542,13 +542,13 @@ The kernel dumps this to `/proc/kmsg` for each crash (example for the `0xcafebab
 
 Reading this output:
 
-- `firewall.cgi/15194` — the crashing process is indeed the CGI we targeted (PID 15194).
-- `$16..$23 = 0x41414141` — callee-saved registers `s0..s7` were restored from our `A` padding at function epilogue. All eight were successfully corrupted.
-- `$28` row — `gp, sp, fp, ra`. The last word, saved `$ra`, carries the attacker value.
-- `epc : 0xcafebabe` — Exception PC, i.e. the address the CPU was trying to fetch when the MMU failed. It equals the value the attacker injected into the RA slot, byte-for-byte.
-- `BadVA : cafebabe` — the faulting virtual address.
+- `firewall.cgi/15194` - the crashing process is indeed the CGI we targeted (PID 15194).
+- `$16..$23 = 0x41414141` - callee-saved registers `s0..s7` were restored from our `A` padding at function epilogue. All eight were successfully corrupted.
+- `$28` row - `gp, sp, fp, ra`. The last word, saved `$ra`, carries the attacker value.
+- `epc : 0xcafebabe` - Exception PC, i.e. the address the CPU was trying to fetch when the MMU failed. It equals the value the attacker injected into the RA slot, byte-for-byte.
+- `BadVA : cafebabe` - the faulting virtual address.
 
-## Attempting weaponization — return-to-libc
+## Attempting weaponization - return-to-libc
 
 With `$ra` under control, the next step is a classic MIPS return-to-libc. uClibc 0.9.33.2 at offset `0x3a4e8` contains a textbook gadget found by Daniele thanks to his expertise in exploit development:
 
@@ -600,7 +600,7 @@ With `libc_base` leaked live from the target CGI process (via `/proc/<pid>/maps`
 
 PoC or it didn't happen:
 <div align="center">
-    <img src="/assets/images/teaching_the_machine_where_to_look/bof-rce1.png" style="width:70%;">
+    <img src="/assets/images/teaching_the_machine_where_to_look/bof-rce1.png" style="width:80%;">
 </div>
 
 Subsequent attempts with a freshly-leaked base did not reproduce. The most likely reason is that the leaking CGI process and the exploiting CGI process are both children of lighttpd, but the kernel's mmap allocator can assign each child a slightly different layout depending on transient kernel state. 
