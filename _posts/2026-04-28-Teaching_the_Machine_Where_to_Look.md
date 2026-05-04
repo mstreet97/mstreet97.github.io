@@ -174,7 +174,7 @@ As a bonus in this case, since it's again adm.cgi, the output gets weirdly refle
     <img src="/assets/images/teaching_the_machine_where_to_look/command-injection-adm-cgi-reboot-time.png" style="width:80%;">
 </div>
 
-Assigned CVE: CVE-2026-41925 **OS Command Injection in adm.cgi**
+Assigned CVE: CVE-2026-41925 **OS Command Injection in adm.cgi (reboot_time)**
 
 ### Finding 4 aka the non-standard dispatch: makeRequest.cgi
 
