@@ -49,8 +49,8 @@ $ readelf -d firewall.cgi | grep NEEDED
 
 `libwebutil.so` exports the two functions that matter for this audit:
 
-- `web_get(key, body, flag)` - URL-form-decodes the POST body, returns the value for `key`
-- `do_system(fmt, ...)` - printf's its arguments into a static buffer, then passes it to `system()`
+- `web_get(key, body, flag)`: URL-form-decodes the POST body, returns the value for `key`
+- `do_system(fmt, ...)`: printf's its arguments into a static buffer, then passes it to `system()`
 
 Both functions are called from every CGI binary. The question "where can an attacker inject shell metacharacters?" reduces almost entirely to the question "where does a `web_get()` return value flow into a `do_system()` format argument without sanitization?"
 
@@ -407,7 +407,7 @@ With the buffer starting at `sp + 0x38`, the layout inside `main()`'s frame look
 | saved `fp` | `sp + 0x260` | 552 |
 | **saved `$ra`** | **`sp + 0x264`** | **556** |
 
-So the 556th byte of the POST body lands exactly on the first byte of saved `$ra`. For `makeRequest.cgi` the arithmetic differs slightly - buffer at `sp + 0x40`, frame `0x258`, saved `ra` at `sp + 0x254` → RA offset = 532.
+So the 556th byte of the POST body lands exactly on the first byte of saved `$ra`. For `makeRequest.cgi` the arithmetic differs slightly: buffer at `sp + 0x40`, frame `0x258`, saved `ra` at `sp + 0x254` → RA offset = 532.
 
 To visualize better, here's a schema of the stack:
 <div align="center">
@@ -473,13 +473,13 @@ The kernel dumps this to `/proc/kmsg` for each crash (example for the `0xcafebab
 
 Reading this output:
 
-- `firewall.cgi/15194` - the crashing process is indeed the CGI we targeted (PID 15194).
-- `$16..$23 = 0x41414141` - callee-saved registers `s0..s7` were restored from our `A` padding at function epilogue. All eight were successfully corrupted.
-- `$28` row - `gp, sp, fp, ra`. The last word, saved `$ra`, carries the attacker value.
-- `epc : 0xcafebabe` - Exception PC, i.e. the address the CPU was trying to fetch when the MMU failed. It equals the value the attacker injected into the RA slot, byte-for-byte.
-- `BadVA : cafebabe` - the faulting virtual address.
+- `firewall.cgi/15194`: the crashing process is indeed the CGI we targeted (PID 15194).
+- `$16..$23 = 0x41414141`: callee-saved registers `s0..s7` were restored from our `A` padding at function epilogue. All eight were successfully corrupted.
+- `$28` row: `gp, sp, fp, ra`. The last word, saved `$ra`, carries the attacker value.
+- `epc : 0xcafebabe`: Exception PC, i.e. the address the CPU was trying to fetch when the MMU failed. It equals the value the attacker injected into the RA slot, byte-for-byte.
+- `BadVA : cafebabe`:" the faulting virtual address.
 
-### Attempting weaponization - return-to-libc
+### Attempting weaponization: return-to-libc
 
 With `$ra` under control, the next step is a classic MIPS return-to-libc. uClibc 0.9.33.2 at offset `0x3a4e8` contains a textbook gadget found by Daniele thanks to his expertise in exploit development:
 
