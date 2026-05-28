@@ -9,8 +9,6 @@ tags: [CVE, MPD, opensource, audio, ASan, SSRF, path-traversal, stack-overflow, 
 ---
 
 
-# Four Bugs You Can Reach With `nc`
-
 *A whitebox pass on the audio playback engine behind a long tail of self-hosted setups.*
 
 This post documents four pre-authentication vulnerabilities found in [Music Player Daemon](https://www.musicpd.org) during a whitebox security assessment of the upstream project. All four reach the vulnerable code paths from the configuration the user receives out of the box and have been acknowledged and fixed upstream.
@@ -50,7 +48,7 @@ Each finding has a working PoC reproduced against the ASan build with a default 
 
 The first manual pass produced one of the four findings (the SSRF chain). Then, we moved into other classes of vulnerabilities, which yielded the other three. The five reportable issues that came out of the assessment were filed as separate hand-written GitHub issues on the upstream tracker on **2026-05-14**. Four landed fixes upstream and one we withdrew after a closer look at our own measurements (that postscript is at the end of the post).
 
-## Finding 1: `pcm_unpack_24be` writes one slot past its buffer
+## Finding 1: pcm_unpack_24be writes one slot past its buffer
 
 The PCM L24 decode path has a sizing mismatch between two stack buffers in `pcm_stream_decode`:
 
@@ -127,11 +125,9 @@ On a hardened release build with `-fstack-protector-strong`, the 4-byte write cl
 
 The fix is a one-line tweak: size `unpack_buffer` to `(buffer.GetCapacity() + 2) / 3`, or constrain the slice handed to `pcm_unpack_24be` to a multiple of 3 bytes before the call. Either way the loop invariant ("`dest` has room for `(src_end - src) / 3` writes, rounded up") needs to actually hold.
 
-**CVSS 3.1:** 8.6 High - `AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:H`
-**CWE:** CWE-787, CWE-125
-Assigned CVE: CVE-2026-49127 **Music Player Daemon < 0.24.11 Stack Buffer Overflow via pcm_unpack_24be**
+Assigned CVE: [CVE-2026-49127](https://www.cve.org/CVERecord?id=CVE-2026-49127) **Music Player Daemon < 0.24.11 Stack Buffer Overflow via pcm_unpack_24be**
 
-## Finding 2: `LocalStorage` accepts `..` paths from `listfiles` and `albumart`
+## Finding 2: LocalStorage accepts .. paths from listfiles and albumart
 
 `LocalStorage::MapFSOrThrow` and `MapUTF8` (`src/storage/plugins/LocalStorage.cxx:86-101`) build the on-disk path by joining the storage root with the user-supplied URI as plain strings. No canonicalisation, so `..` segments survive in the string and get flattened by the kernel at `openat()` time.
 
@@ -188,9 +184,7 @@ OK
 
 Fix path is `std::filesystem::weakly_canonical` (or the equivalent helper on `AllocatedPath`) followed by a containment check against `base_fs`. Symlinks should be resolved too if you want to defend against the "plant a symlink inside `music_directory`" variant.
 
-**CVSS 3.1:** 7.5 High - `AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N`
-**CWE:** CWE-22
-Assigned CVE: CVE-2026-49128 **Music Player Daemon < 0.24.11 Path Traversal via LocalStorage URI Handling**
+Assigned CVE: [CVE-2026-49128](https://www.cve.org/CVERecord?id=CVE-2026-49128) **Music Player Daemon < 0.24.11 Path Traversal via LocalStorage URI Handling**
 
 
 ## Finding 3: SSRF via libcurl + ffmpeg fall-through
@@ -234,11 +228,9 @@ The second piece `CurlInputPlugin::InitEasy` (`src/input/plugins/CurlInputPlugin
 
 The fix has two parts: in `InitEasy`, set `CURLOPT_REDIR_PROTOCOLS_STR` to `"http,https"` explicitly (so the daemon is safe on every libcurl version, not just the ones shipped after 2022), in `input_ffmpeg_open`, add a small scheme allow-list that mirrors the set the http(s) gate is meant to enforce. The current "if libavformat claims it, we run it" behaviour is too permissive given the plugin sits behind unauthenticated commands.
 
-**CVSS 3.1:** 5.8 Medium - `AV:N/AC:L/PR:N/UI:N/S:C/C:L/I:N/A:N`
-**CWE:** CWE-918
-Assigned CVE: CVE-2026-49128 **Music Player Daemon < 0.24.11 SSRF via CurlInputPlugin**
+Assigned CVE: [CVE-2026-49129](https://www.cve.org/CVERecord?id=CVE-2026-49129) **Music Player Daemon < 0.24.11 SSRF via CurlInputPlugin**
 
-## Finding 4: XSPF `<location>` smuggles CR/LF through Expat
+## Finding 4: XSPF location smuggles CR/LF through Expat
 
 This one is my favorite of the four, because the root cause is in **how Expat interprets the XML grammar**, not in MPD's own logic.
 
@@ -296,9 +288,7 @@ Four fabricated key/value lines smuggled through a single `<location>` element (
 
 Fix is running the accumulated location through the same kind of control-character filter as `FixTagString` (or at minimum rejecting CR / LF / anything below 0x20 except whatever URIs legitimately need). A defence-in-depth `Response::FmtUri` helper on the response writer side closes the same surface from the other end. The state file writer in `queue/Save.cxx` is worth checking too if it doesn't escape control bytes on write, a poisoned state file survives a daemon restart on its own.
 
-**CVSS 3.1:** 5.3 Medium - `AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:N`
-**CWE:** CWE-93, CWE-117
-Assigned CVE: CVE-2026-49128 **Music Player Daemon < 0.24.11 CRLF Injection via XspfPlaylistPlugin.cxx**
+Assigned CVE: [CVE-2026-49130](https://www.cve.org/CVERecord?id=CVE-2026-49130) **Music Player Daemon < 0.24.11 CRLF Injection via XspfPlaylistPlugin.cxx**
 
 
 ## A finding we got wrong
