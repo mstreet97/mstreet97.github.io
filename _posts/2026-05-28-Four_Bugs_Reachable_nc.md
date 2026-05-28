@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Four Bugs You Can Reach With `nc`"
+title: "Four Bugs You Can Reach With netcat"
 subtitle: "A whitebox pass on the audio playback engine behind a long tail of self-hosted setups"
 date: 2026-05-25
 author: Matteo Strada (mstreet)
