@@ -15,8 +15,6 @@ This post documents four pre-authentication vulnerabilities found in [Music Play
 
 The work was done together with my friend and colleague Daniele Berardinelli (his blog [here](https://berardinellidaniele.com/)).
 
----
-
 ## Target
 
 Music Player Daemon is the audio playback engine behind a long tail of headless music setups: Pi-based hifi streamers, NAS-attached players, Volumio/moOde/RuneAudio distros, kodi backends, and a non-trivial set of self-hosted music server appliances. It speaks a line-oriented text protocol on TCP/6600, decodes anything libavformat or libmad will accept, fetches HTTP streams, parses XSPF / ASX / RSS playlists, and exposes a directory of files via path-keyed commands. Approximately **103 kLOC of C++17** across 670 `.cxx` and 927 `.hxx` files, last release `v0.24.9` (2026-03-11), upstream branch declared as `0.25 (not yet released)`.
