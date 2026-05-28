@@ -6,8 +6,6 @@ categories: [security-research, iot, vulnerability-disclosure, cybersecurity, cv
 tags: [CVE, IoT, embedded, firmware, reverse-engineering, CVE-2026-30701, CVE-2026-30702, CVE-2026-30703, CVE-2026-30704]
 ---
 
-## Summary
-
 During independent security research activity, I decided to analyze a low-cost consumer WiFi extender that I had laying at home. This journey proved very interesting as it allowed me to mix the usual web based blackbox approach and integrate it with the techniques of hardware hacking learned in Whid Ninja's Offensive Hardware Hacking course transforming it in a full fledged white box test, which yielded very satisfying results.  
 What initially started as a blackbox assessment of the web management interface in fact progressively evolved into a full firmware reverse engineering effort, ultimately leading to the identification of multiple security vulnerabilities, including an authentication bypass, a OS command injection leading to remote code execution, hardcoded credential disclosures, and an unprotected bootloader access via UART port.
 
