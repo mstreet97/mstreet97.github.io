@@ -2,12 +2,11 @@
 layout: post
 title: "From UART to Root (Android Version): pppoe_wrapper Command Injection and more in an Amlogic S905X TV Box"
 date: 2026-10-29
-categories: security-research, vulnerability-disclosure, embedded, cve
+author: Matteo Strada (mstreet)
+categories: [security-research, vulnerability-disclosure, embedded, cve]
 ---
 
-*Matteo Strada (mstreet), 29 October 2026*
-
-*An Amlogic S905X Android TV box, a serial console, and a vendor daemon that
+*An Amlogic S905X Android TV box, an unprotected serial console and a vendor daemon that
 turns any local datagram into a root command. Add a subtitle decoder that
 hangs forever on 20 bytes, a sibling write past a stack array in the same
 decoder for good measure.*
@@ -45,8 +44,8 @@ U-Boot by interrupting the startup mechanism and we are greeted with an unprotec
     <img src="/assets/images/nexbox_a95x/uboot-unprotected.png" style="width:60%;">
 </div>
 
-Very handy, but can we do better than this? Of course we can!
 
+Very handy, but can we do better than this? Of course we can!
 By continuing the boot sequence, the box hands out a shell as
 uid 2000 with no password which was very handy indeed for further analysis.
 
@@ -54,11 +53,16 @@ uid 2000 with no password which was very handy indeed for further analysis.
     <img src="/assets/images/nexbox_a95x/user-shell-unprotected.png" style="width:60%;">
 </div>
 
+
 From there the plan was the usual one for
 embedded Android: enumerate the root-run vendor daemons first (they are the
 cheapest path from shell to root) and then the network listeners. Every
 finding below was confirmed twice: statically in the disassembly, and
 dynamically on the box itself.
+
+Impact: any entity with physical access to the box → shell user. CVSS 3.1: **6.6** **[REVIEW: CVSS]**
+(`AV:P/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H`). This is what gives a physical foothold 
+into the tx box.
 
 ## Finding 1: pppoe_wrapper command injection in a root daemon (CWE-78)
 
@@ -166,6 +170,7 @@ Validation, from the serial shell as uid 2000:
     <img src="/assets/images/nexbox_a95x/privesc_pppoe4.png" style="width:60%;">
 </div>
 
+
 The file is owned `root:system`, running with the daemon's own SELinux
 context, so the injection executed as the daemon, from a uid-2000 shell's
 input.
@@ -185,6 +190,7 @@ toolset at the other end.
 <div align="center">
     <img src="/assets/images/nexbox_a95x/privesc_pppoe8.png" style="width:60%;">
 </div>
+
 
 A quirk worth documenting: kernel 3.14 does not autobind unbound datagram
 clients, and the daemon ACKs with a `sendto()` back to the source address
@@ -220,11 +226,13 @@ The PoC binary is pre-built and pushed on the device via base64 transfers from t
     <img src="/assets/images/nexbox_a95x/privesc_pppoe2.png" style="width:60%;">
 </div>
 
+
 We start off with this environment:
 
 <div align="center">
     <img src="/assets/images/nexbox_a95x/privesc_pppoe1.png" style="width:60%;">
 </div>
+
 
 The pushed binaries:
 
@@ -232,11 +240,13 @@ The pushed binaries:
     <img src="/assets/images/nexbox_a95x/privesc_pppoe3.png" style="width:60%;">
 </div>
 
+
 We then trigger the binary giving us a shell on port 4444: 
 
 <div align="center">
     <img src="/assets/images/nexbox_a95x/privesc_pppoe4bis.png" style="width:60%;">
 </div>
+
 
 And simply connect to the bind shell:
 
@@ -244,11 +254,13 @@ And simply connect to the bind shell:
     <img src="/assets/images/nexbox_a95x/privesc_pppoe6.png" style="width:60%;">
 </div>
 
+
 Finally, if we fancy ADB, we can also run the binary setting it up, to get ADB directly as root:
 
 <div align="center">
     <img src="/assets/images/nexbox_a95x/privesc_pppoe8.png" style="width:60%;">
 </div>
+
 
 We kept this running as it became very handy for further explotation attempts.
 
@@ -317,7 +329,7 @@ The fix for this is the `else` the vendor never wrote:
 ```c
     } else {
         break;    /* a block that doesn't fit means the packet is
-                     malformed — bail out instead of spinning */
+                     malformed and bails out instead of spinning */
     }
 ```
 
